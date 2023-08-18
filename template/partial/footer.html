@@ -1,0 +1,61 @@
+
+<div class="container">
+    <footer class="footer">
+        <div class="width1200 layui-row">
+
+            <div class="layui-col-md5">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        网站优化系统介绍
+                    </div>
+                    <div class="layui-card-body jieshao">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md4 layui-col-md-offset3">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        联系方式
+                    </div>
+                    <div class="layui-card-body jieshao">
+
+                        <p>微信号：{% if wxCode %}{{ wxCode }}{% else %}kekegov{% endif %}</p>
+
+                        <div class="interactive-body-r">
+                            <button class="wx-btn" type="button"><i class="layui-icon layui-icon-login-wechat"></i>微信二维码</button>
+                            <button class="go-top go-top-click" type="button"><i class="layui-icon layui-icon-top"></i>返回顶部</button>
+                            <div class="ewm" >
+                                <img src="/img/{% if wxCode %}wx/{{ wxCode }}{% else %}wx{% endif %}.jpg" width="250px"
+                                     alt="微信二维码">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layout"></div>
+        <p>&copy;2023 熊猫头AI.LycEcho All Rights Reserved <a href="https://beian.miit.gov.cn/"
+                                                              rel="nofollow">粤ICP备18098129
+            号-1</a>
+        </p>
+</div>
+</footer>
+</div>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?3029b38874b10c458a8fd1b7ffabd3f7";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+<script src='/js/clipboard.min.js'></script>
+<script src='/js/lycecho.js'></script>
+</body>
+</html>
+

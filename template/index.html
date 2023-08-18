@@ -1,0 +1,393 @@
+{% include "partial/header.html" %}
+<main class="container">
+    <div class="index">
+        <img src="http://www.lycecho.com/img/banner2{% if IsMobile %}M{% endif %}.jpg" width="100%"/>
+        <div class="layui-row content">
+            <div class="layui-col-md8 layui-col-md-offset2">
+<!--                <a href="/quickTask/list">任务列表</a>-->
+<!--                <a href="/setting/save">设置</a>-->
+             </div>
+         </div>
+    </div>
+</main>
+
+
+{% include "partial/footer.html" %}
+
+{% verbatim %}
+<script type="text/html" id="keywordsTpl">
+    {{# d.map((v,k)=>{ }}
+    {{ k+1 }}、 {{ v }}<br>
+    {{# }) }}
+</script>
+{% endverbatim %}
+
+
+<div id="result"></div>
+<script>
+    layui.use(["layer", "form", "jquery", 'common','layedit','element','laytpl'], function () {
+        let $ = layui.$;
+        let layer = layui.layer;
+        let common = layui.common;
+        var form = layui.form
+        var jhapi = 'http://www.lycecho.com/api/getContent?title=';
+        var token = common.getStore('token') || '';
+        var tokenAi = common.getStore('tokenAi') || '';
+        var element = layui.element
+        var layedit = layui.layedit;
+        var laytpl = layui.laytpl
+
+
+        var isThesis = 0 //是否论文
+        var thesisNum = 0 //数量
+
+
+        // layedit.build('originalAlert',{
+        //     height:255,
+        // });
+
+
+        $('#token').val(token.toString() ? token : 'lycecho')
+        $('.originalToken').val(common.getStore('originalToken') || 'YTFNkYBkkf')
+
+        $('#tokenAi').val(tokenAi.toString() ? tokenAi : 'lycechoai')
+        $('#originalTokenAi').val(common.getStore('originalTokenAi'))
+
+
+        $('#juhe').on('click', function () {
+            common.setStore('originalToken', $("#originalToken").val());
+            common.setStore('token', $("#token").val());
+
+            var json = JSON.parse(JSON.stringify(form.val('juhefrom')));
+            var keys = json['keys'].split("\n");
+            if (!keys[0]) {
+                return layer.msg('请先输入关键字!')
+            }
+            var apis = '';
+            keys.forEach(function (key) {
+                if (key != '') {
+                    var parame = '';
+                    for (var k in json) {
+                        if (k != 'keys' && json[k] != '') {
+                            json[k] = json[k] == 'on' ? 1 : json[k];
+                            parame += '&' + k + '=' + json[k];
+                        }
+                    }
+                    apis += encodeURI(jhapi + key + parame) + "\n";
+                }
+            })
+            $('.links textarea').text(apis);
+        });
+
+        $('#txt').on('click', function () {
+            var txt = $('.links textarea').text();
+            if (txt == '') {
+                alert('请先生成URL！');
+                return false;
+            }
+            var urlObject = window.URL || window.webkitURL || window;
+            var export_blob = new Blob([txt]);
+            var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+            save_link.href = urlObject.createObjectURL(export_blob);
+            save_link.download = 'API任务URL列表.txt';
+            save_link.click();
+        })
+
+        var timer = null
+
+        function getAsyncContent(sid) {
+            $.ajax({
+                url: '/api/account/article',
+                data: {sid: sid},
+                headers: {'token': common.getStore('tokenAi')},
+                dataType: "json",
+                success: function (res) {
+                    if (res.code == -2) {
+                        clearInterval(timer)
+                        layer.closeAll()
+                        layer.msg('文章含有违禁词，生成失败，请重试！')
+                    }else if (res.code == 1) {
+                        clearInterval(timer)
+                        layer.closeAll()
+                        //成功
+                        layer.msg('智能生成成功!')
+                        $('.makeRepeatAi').val(res.data.repeat+'%')
+                        $('.makeTitleAi').val(res.data.title)
+                        $('.makeTagsAi').val(res.data.tags)
+                        $('.makeContentAi').html(res.data.content)
+                    } else {
+                        layer.msg("请耐心等待生成，或在文章列表查看..")
+                    }
+                }
+            })
+
+        }
+
+        $('.doMakeContent').on('click', function () {
+
+            var data = {}
+            var nameAlert = ''
+            if ($(this).data('ai')) {
+                // return layer.msg('维护升级中..')
+                nameAlert = 'Ai'
+                data = form.val('juhefromai')
+
+            } else {
+                data = form.val('juhefrom')
+
+            }
+
+            common.setStore('originalToken' + nameAlert, $("#originalToken" + nameAlert).val());
+            common.setStore('token' + nameAlert, $("#token" + nameAlert).val());
+            var keys = data['keys'].split("\n");
+            if (!keys[0]) {
+                return layer.msg('请先输入关键字!')
+            }
+            if (!nameAlert) {
+                common.load(100,'智能聚合问答中..')
+            }
+
+            delete data['keys']
+
+            if ( keys.length > 1) {
+                laytpl(keywordsTpl.innerHTML).render(keys, function (html) {
+                    layer.confirm(html, { title:'批量添加以下文章',btn:['确定添加','调整一下']}, function(index){
+                        common.load(1000,'批量添加中..')
+                        keys.map(v=>{
+                            data['title'] = v
+                            getContent(data,nameAlert,function (res){
+                                layer.msg('已添加任务：'+ data['title'])
+                            },false)
+                        })
+                        layer.closeAll()
+
+                        layer.alert('等待半小时之后文章生成')
+
+                    }, function(index){
+                        console.log('取消')
+                    });
+                })
+                return;
+            }
+
+
+            data['title'] = keys[0]
+            getContent(data,nameAlert)
+
+        })
+
+        function getContent(data,nameAlert,success=false,async=true){
+
+            if (data.complete && thesisNum){
+                data.model = 3
+                data.length = thesisNum
+            }
+
+            delete data.complete
+
+            $.ajax({
+                url: 'api/getContent',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                async:async,
+                success: function (res) {
+                    if (success !== false){
+                        if (typeof sussess == "function") {
+                            return success()
+                        }
+                        return success
+                    }
+                    layer.closeAll()
+                    if (res.code == -1) {
+                        layer.msg(res.msg)
+                    } else {
+                        layer.closeAll()
+                        if (res.data.async) {
+                            common.load(500,'AI智能生成原创文章中..')
+                            //定时获取文章
+                            timer = setInterval(() => {
+                                getAsyncContent(res.data.sid);
+                            }, 3000) // 设置30秒执行一次查询
+
+                        } else {
+                            layer.msg('智能生成成功!')
+                            $('.makeTitle' + nameAlert).val(res.data.title)
+                            $('.makeTags' + nameAlert).val(res.data.tags)
+                            $('.makeContent' + nameAlert).html(res.data.content)
+                        }
+                    }
+                }
+            })
+        }
+
+        $('#copy').on('click', function () {
+            $('#needOriginal').val(makeContent.innerHTML)
+        })
+
+        $('#original').on('click', function () {
+            data = form.val('originalForm')
+            data.v = Number(data.v)
+            if (data.originalToken != "") {
+                data.token = data.originalToken
+            }
+            if (data.token == "") {
+                data.token = 'YTFNkYBkkf'
+            }
+
+            if (data.token) {
+                common.setStore('originalToken', data.token)
+            }
+            // data['style'] = 1
+            // data['ul'] = 1
+            // data['image'] = 1
+            data.type = 'txt'
+            data.content = data.content.replaceAll('??','?')
+            common.load(300,'智能伪原创中..')
+
+            $.ajax({
+                url: 'api/getOriginal',
+                type: 'post',
+                dataType: 'json',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data: JSON.stringify(data),
+                success: function (res) {
+                    layer.closeAll()
+                    if (res.code == 1){
+                        {% if IsMobile %}
+                        $('#needOriginal').css('min-height','50px')
+                        {% endif %}
+
+                        $('.flex1:nth-child(2)').show()
+                        layer.msg('智能伪原创成功!')
+
+                        $('.copy').click(function(){
+                            var aux = document.createElement("input"); // 创建元素用于复制
+                            aux.setAttribute("value", res.data.content); // 内容content放入元素
+                            document.body.appendChild(aux); // 将元素插入页面进行调用
+                            aux.select();// 选择内容
+                            document.execCommand("copy");// 将内容复制到系统剪贴板
+                            document.body.removeChild(aux);// 删除创建元素
+                            layer.msg('复制成功')
+                        })
+                        $('#originalAlert').html(contrastText({ value1: res.data.content,value2: data.content}).value2)
+                        // layedit.build('originalAlert',{
+                        //     height: 255,
+                        // });
+                    }else{
+                        layer.alert(res.msg)
+                    }
+                }
+                , error: function (res) {
+                    layer.closeAll()
+                    layer.alert(res.responseJSON.msg)
+                }
+            })
+        })
+
+        //分词
+        $('#participle').on('click', function () {
+            data = form.val('participleForm')
+
+            if (data.participleToken != "") {
+                data['token'] = data.participleToken
+            }
+            if (!data['token']) {
+                data['token'] = 'getParticiple'
+            }
+
+            if (data['token']) {
+                common.setStore('participleToken', data['token'])
+            }
+            data.content = data.content.replaceAll('??','?')
+            common.load(300,'智能分词中..')
+            console.log("data",data)
+            $.ajax({
+                url: 'api/getParticiple',
+                type: 'post',
+                dataType: 'json',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data: JSON.stringify(data),
+                success: function (res) {
+                    layer.closeAll()
+                    if (res.code == 1){
+                        {% if IsMobile %}
+                        $('#needParticiple').css('min-height','50px')
+                        {% endif %}
+
+                        $('.flex1:nth-child(2)').show()
+                        layer.msg('智能分词成功!')
+
+                        $('#participleAlert').val(res.data?.content)
+                    }else{
+                        layer.alert(res.msg)
+                    }
+                }
+                , error: function (res) {
+                    layer.closeAll()
+                    layer.alert(res.responseJSON.msg)
+                }
+            })
+        })
+
+        form.on('switch(complete)', function(data){
+            if(data.elem.checked){
+                //判断是不是体验用户
+                var tokenAi = common.getStore('tokenAi')
+                if(tokenAi == 'lycechoai' || !tokenAi){
+                    layer.alert('付费用户才可使用')
+                    return form.val("juhefromai", {complete:false})
+                }
+
+                // <input type="radio" name="number" value="8000" title="8千字">
+                //            <input type="radio" name="number" value="10000" title="1W字" >
+                //            <input type="radio" name="number" value="15000" title="1W5字" >
+                //            <input type="radio" name="number" value="20000" title="2W字" >
+
+                isThesis = 1
+                layer.open({
+                    title: '消耗次数提醒 ---- 每1000字消耗10次数'
+                    ,btn:'确认字数'
+                    , content:
+                        `<div class="layui-form" lay-filter="changeNumberForm">
+                            选择要生成的完整论文字数 <br>
+                            包括：论文摘要和关键词，目录，引言，正文，结论，参考文献和注释，附录  <br>
+                            <input type="radio" name="number" value="3000" title="3千字" checked>
+                           <input type="radio" name="number" value="5000" title="5千字" >
+                           <input type="radio" name="number" value="8000" title="8千字" >
+                           <input type="radio" name="number" value="10000" title="1w字" >
+                        
+                           </div>`
+                    ,success:function (d){
+                        form.render()
+                    }
+                    ,yes: function(index, layero){
+                        var changeNumberForm = form.val("changeNumberForm");
+                        thesisNum = Number(changeNumberForm.number)
+
+                        layer.closeAll()
+                        layer.alert('提醒：每1000字 消耗 10 次数')
+
+                    },
+                    cancel:function(index, layero){
+                        if(!thesisNum){
+                            form.val("juhefromai", {complete:false})
+                        }
+                    }
+                    });
+            }else{
+                isThesis = 0
+            }
+        });
+
+
+
+
+    })
+</script>
+
+<script src='/js/contrast.js'></script>

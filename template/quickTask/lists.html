@@ -1,0 +1,191 @@
+{% include "partial/header.html" %}
+
+<main class="container">
+    <div class="install">
+        <h1>任务管理列表</h1>
+        <div style="display: flex;justify-content: space-between">
+        <a class="layui-btn layui-btn-xs" href="/quickTask/save">新增任务</a>
+        </div>
+        <table id="tableLists" lay-filter="tableLists"></table>
+
+        <div class="batch_input layui-form">
+            <div style="width: 100px;display: inline-block;" >
+                    <select name="batch" lay-filter="batch" id="batch" >
+                        <option value="">批量操作</option>
+                        <option value="start">批量开始</option>
+                        <option value="stop">批量暂停</option>
+                        <option value="del">批量删除</option>
+                    </select>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include "partial/footer.html" %}
+
+{% verbatim %}
+<script type="text/html" id="control">
+    <p> <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="del">删除</a></p>
+</script>
+{% endverbatim %}
+
+
+<script>
+
+    layui.use(['table', 'common', 'form', 'jquery','element'], function () {
+        var table = layui.table;
+        var common = layui.common;
+        var form = layui.form;
+        var $ = layui.jquery;
+        var element = layui.element;
+        form.render()
+        //第一个实例
+        table.render({
+            elem: '#tableLists'
+            , url: '/api/quickTask/list' //数据接口
+            , page: true //开启分页
+            , response: {
+                statusCode: 1
+            }
+            , cols: [[ //表头
+                {
+                    type: "checkbox"
+                }
+                // ,{field: 'category_title', title: '分组',align: 'center',width:100
+                // }
+                ,{field: 'platform_str', title: '平台',align: 'center',width: 100}
+                ,{field: 'keyword', title: '关键词',align: 'center',templet:function (d){
+                        return '<div class="site_wrap" >'+d.keyword+'</div>';
+                    }}
+                ,{field: 'url', title: '网址',align: 'center',templet:function (d){
+                        return '<div class="site_wrap" title="'+d.url+'">'+d.url+'</div>';
+                    }}
+                ,{field: 'rank_start', title: '初排', width:80,align: 'center',  sort: true}
+                ,{field: 'rank_end', title: '新排', width: 80,align: 'center',  sort: true
+                }
+                ,{field: 'rank_compare', title: '变化', width: 85,align: 'center', sort: true
+                }
+                ,{field: 'day_click', title: '日优化<i class="layui-icon layui-icon-edit"/>',
+                    width: 80,align: 'center',edit:'text',style:'background-color:#ecf5ff'}
+                ,{field: 'today_click', title: '已优化', width: 75,align: 'center'}
+                ,{field: 'status_str', title: '状态', width: 75,align: 'center',templet:function
+                        (d){
+                        let style = ''
+                        if(d.status == -1){
+                            style = 'color:#EA394C'
+                        }else if(d.status == 1){
+                            style = 'color:#1AB394'
+                        }
+                        return `<div style="${style}">${d.status_str}</div>`
+                    }}
+                // , {fixed: 'right', title: '操作', width: 160, align: 'center', toolbar: '#control'}
+            ]]
+            ,page: {layout:['count','prev', 'page', 'next','limit','refresh']}
+            ,done:function(res,curr,count)
+            {
+                if(res.count){ $(".batch_input").show(); }
+            }
+        });
+
+
+
+        form.on('select(batch)', function(data){
+            console.log("1")
+            var checkStatus = table.checkStatus('tableLists');
+            if (checkStatus.data && checkStatus.data.length <= 0){
+                return layer.msg("请选择数据")
+            }
+
+            let ids = []
+            checkStatus.data.map(v=>{
+                ids.push(v.id)
+            })
+
+            if( data.value == 'del' ) {
+                layer.confirm('是否删除选择的任务', {
+                    icon: 3,
+                    title: '删除任务'
+                }, function (index) {
+                    common.putData({'ids': ids}, layer.index, '/api/quickTask/delete',
+                        'table')
+                    layer.close(index);
+                });
+            }else  if( data.value == 'start' ) {
+                layer.confirm('是否批量启动任务', {
+                    icon: 3,
+                    title: '启动任务'
+                }, function (index) {
+                    common.putData({'ids': ids}, layer.index, '/api/quickTask/start',
+                        'table')
+                    layer.close(index);
+                });
+            }else  if( data.value == 'stop' ) {
+                layer.confirm('是否批量暂停任务', {
+                    icon: 3,
+                    title: '暂停任务'
+                }, function (index) {
+                    common.putData({'ids': ids}, layer.index, '/api/quickTask/stop',
+                        'table')
+                    layer.close(index);
+                });
+            }
+        });
+
+        table.on('edit(tableLists)', function(obj){
+            console.log("obj",obj)
+            if(obj.field == 'day_click'){
+                obj.value = parseInt(obj.value)
+                common.putData({ids:[obj.data.id],day_click:parseInt(obj.value)},layer.index,'/api/quickTask/dayClickSave',function(res){
+                    layer.msg('修改成功',{time:1000})
+                    $('.layui-laypage-refresh .layui-icon-refresh').click()
+                })
+            }
+        });
+
+        form.on('select(hostSelect)', function(data){
+            screenHost = data.value
+            table.reload('quickSortList', {
+                where: getScreen()
+                ,page:{
+                    curr:1
+                    ,layout:['count','limit','prev', 'page', 'next','refresh']
+                }
+            });
+        });
+        form.on('select(category_id)', function(data){
+            screen_category_id = data.value
+            table.reload('quickSortList', {
+                where: getScreen()
+                ,page:{
+                    curr:1
+                    ,layout:['count','limit','prev', 'page', 'next','refresh']
+                }
+            });
+        });
+
+
+        form.on('select(statusSelect)', function(data){
+            screenStatus = data.value
+            table.reload('quickSortList', {
+                where: getScreen()
+                ,page:{
+                    curr:1
+                    ,layout:['count','limit','prev', 'page', 'next','refresh']
+                }
+            });
+        });
+
+        form.on('select(platformSelect)', function(data){
+            screenPlatform = data.value
+            table.reload('quickSortList', {
+                where: getScreen()
+                ,page:{
+                    curr:1
+                    ,layout:['count','limit','prev', 'page', 'next','refresh']
+                }
+            });
+        });
+
+
+    });
+</script>

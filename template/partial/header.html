@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charSet="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+    <meta name="applicable-device" content="mobile">
+    <title>{% if tdkTitle %}{{tdkTitle}}-{% endif %}熊猫头AI-论文生成_降重_写作平台</title>
+    <link href="/js/layui/css/layui.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/layui/layui.js"></script>
+
+    <script src="/js/qs6.11.js"></script>
+</head>
+<script>
+    layui.config({
+        base: '/js/layui/mods/'
+    }).extend({
+        common:'common'
+    });
+</script>
+<body>
+{% if token != "tdflyc" %}
+<div class="container">
+    <header
+            class="header {% if webInfo.TabBar == '/' || webInfo.TabBar == '/ai' || webInfo.TabBar == '/original' || webInfo.TabBar == '/ask' || webInfo.TabBar == '/article/' %}index-header{% endif %}" id="header">
+        <div class="tabbar">
+            <ul class="tabbar-inner">
+
+
+                <li class="tabbar-item">
+                    <a href="/" rel="nofollow"
+                       class="{% if webInfo.TabBar == '/' || webInfo.TabBar == '/ai' || webInfo.TabBar == '/original' || webInfo.TabBar == '/ask' %}tabber-hover{% endif %}"><img src="http://www.lycecho.com/img/logo.png" width="45" style="margin-right: 10px"/> {% if !IsMobile %}主页{% endif %}</a>
+                </li>
+                <li class="tabbar-item">
+                <a href="/quickTask/list">任务列表</a>
+                </li>
+                <li class="tabbar-item">
+                <a href="/setting/save">设置</a>
+                </li>
+                <li class="tabbar-item">
+                    <a href="http://www.lycecho.com" > 熊猫头AI</a>
+                </li>
+
+            </ul>
+        </div>
+    </header>
+</div>
+{% endif %}

@@ -1,0 +1,680 @@
+body{
+    box-sizing: border-box;
+    /*background-color: #f5f6f7;*/
+}
+.width1200{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+a:hover{
+    color: #6ea2ff;
+}
+.header{
+    height: 70px;
+    line-height: 70px;
+    text-align: center;
+    z-index: 1234;
+    -webkit-user-select: none;
+    user-select: none;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0 16px;
+    margin-bottom: 10px;
+
+}
+.index-header{
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 99990;
+    top: 0;
+    -webkit-transition: all 1s ease-in-out;
+    -o-transition: all 1s ease-in-out;
+    -ms-transition: all 1s ease-in-out;
+    -moz-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
+    transform: translate3d(0,0,0);
+    -o-transform: translate3d(0,0,0);
+    -moz-transform: translate3d(0,0,0);
+    -ms-transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+}
+.header:after{
+    content: "";
+    height: 1px;
+    width: 100%;
+    bottom: -1px;
+    right: 0;
+    border-bottom: 1px solid rgba(103, 111, 125, .1);
+    position: absolute;
+    transform: scaleY(.5);
+    -webkit-transform: scaleY(.5);
+}
+
+.header.header-hover{
+    height: 70px;
+    background: rgba(0, 0, 0, 0.5);
+}
+.tabber-hover{
+
+}
+.header-hover .tabbar .tabbar-item a{
+    color: #fff;
+}
+.tabbar{
+    height: 50px;
+    width: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.tabbar .tabbar-inner{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    height: 50px;
+    width: 100%;
+}
+.tabbar .tabbar-inner  .layui-btn{
+    font-size: 16px;
+}
+.tabbar .tabbar-inner .active a{
+    background: #00FF00;
+}
+.tabbar:before{
+    content: "";
+    height: 1px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 0;
+    border-top: 1px solid #EFF0F2;
+    transform: scaleY(.5);
+    -webkit-transform: scaleY(.5);
+}
+
+.tabbar .tabbar-item{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    color: #111;
+    font-size: 16px;
+    line-height: 1;
+    position: relative;
+}
+.tabbar .tabbar-item a{
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.container{
+    box-shadow: 0 1px 5px 0 rgba(0,0,0, 0.1);
+    width: 100%;
+    margin: 0 auto;
+}
+.footer .layui-card{
+    box-shadow: none;
+}
+.footer .layui-card-header{
+    color: #fff;
+}
+.footer .interactive-body-r .layui-icon{
+    font-size: 30px;
+    margin-right: 5px;
+}
+.footer .interactive-body-r{
+  margin-top: 100px;
+}
+.footer .interactive-body-r .wx-btn{
+    margin-left: 0px;
+    background-color: #04c38e;
+}
+.footer .interactive-body-r button:hover{
+    opacity: 0.8;
+}
+.footer .interactive-body-r .ewm{
+    display: none;
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    z-index: 10;
+}
+.footer .interactive-body-r button{
+    display: flex;
+    justify-content: center;
+    float: left;
+    width: 120px;
+    height: 38px;
+    margin-left: 11px;
+    line-height: 38px;
+    color: #fff;
+    border-radius: 5px;
+    text-align: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    -webkit-transition: 0.3s linear;
+    -o-transition: 0.3s linear;
+    transition: 0.3s linear;
+}
+.footer .interactive-body-r .go-top{
+    background-color: #0856ab;
+}
+.footer{
+    text-align: center;
+    font-size: 10px;
+    padding: 28px 16px 46px;
+    color: #fff;
+    background: #141621;
+    position: relative;
+}
+.footer a{
+    display: inline-block;
+    padding: 0 8px 0 0;
+    color: #6ea2ff;
+    font-size: 12px;
+}
+.footer .layui-card{
+    text-align: left;
+    background: none;
+    color: #fff;
+}
+.footer p{
+    margin-top: 4px;
+}
+.install{
+    padding:15px 0;
+}
+.install-index{
+    max-width: 500px;
+    padding: 165px;
+}
+.install h1{
+    margin-bottom: 20px;
+    text-align: center;
+}
+.index {
+    position: relative;
+    /*padding: 0 15px;*/
+    /*background: #eeeeee4a;*/
+}
+.index .layui-tab-title{
+    text-align: center;
+}
+.index .menu2{
+    height: 50px;
+}
+.index .menu2 li{
+    margin: 5px 20px;
+}
+.index .menu2 li img{
+    margin-right: 5px;
+}
+.padding-normal {
+    padding: 20px;
+}
+.layui-form-label{
+    width: 110px;
+}
+.layui-input-block{
+    margin-left: 140px;
+    margin-right: 10px;
+}
+.layadmin-dataview {
+    height: 332px!important;
+}
+.layadmin-carousel {
+    background-color: #fff;
+}
+.layadmin-carousel .layui-carousel-ind {
+    position: absolute;
+    top: -41px;
+    text-align: right;
+}
+.layadmin-carousel .layui-carousel-ind ul {
+    background: 0 0;
+}
+.layadmin-carousel .layui-carousel-ind li.layui-this {
+    background-color: #999;
+}
+.layadmin-carousel .layui-carousel-ind li {
+    background-color: #e2e2e2;
+}
+.tag-items .layui-btn {
+    padding-right: 0;
+    cursor: default;
+    margin-top: 10px;
+}
+.tag-items .layui-btn .tag-close {
+    cursor: pointer;
+}
+.layui-elem-field{
+    /*border: none;*/
+}
+.layui-elem-field legend{
+    margin-bottom: 20px;
+}
+
+.layui-btn{
+    background-color: #1976d7;
+}
+.layui-btn-warm{
+    background-color: #c59720;
+}
+.layui-form-select dl dd.layui-this{
+    background-color: #1976d7;
+}
+.layui-btn-primary{
+    background: 0 0;
+}
+.layui-colla-title{
+    background-color: #fafafa00;
+}
+
+.layui-collapse{
+    border: none;
+}
+
+.makeContent{
+    /*padding: 10px;*/
+}
+
+.showContent{
+    padding: 10px;
+}
+.makeContent p{
+    margin: 10px 0;
+}
+.makeContent img{
+    max-width: 100%;
+}
+.makeContent .article_abstract{
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+}
+.makeContent  .log_logul{
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 30px;
+    border-bottom: 1px dashed #cacaca;
+    padding-left: 10px;
+    padding-bottom: 15px;
+}
+.makeContent h3{
+    font-weight: bold;
+    font-size: 16px;
+    color: #0360d4;
+    /*margin-left: -10px;*/
+}
+
+
+/*登录界面*/
+.vipMenu{
+    display: none;
+}
+.layui-tab{
+    margin-top: 0;
+}
+.layui-tab-title{
+    background: #fff;
+}
+.layui-tab-title .layui-this{
+    color: #1976d7;
+}
+.layui-tab-title .layui-this:after{
+    border-color: #fff0;
+    border-bottom-width: 3px;
+    margin-top: 5px;
+    border-bottom-color: #1976d7;
+}
+.tips a{
+    color: #1e9fff;
+}
+
+.tips{
+    color: #787878;
+    display: block;
+    width: 100%;
+}
+
+.juhefromai .tips{
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.jieshao p{
+
+}
+
+.layui-card{
+    -moz-box-shadow:0px 0px 1px #bdbdbd;
+    -webkit-box-shadow:0px 0px 1px #bdbdbd;
+    box-shadow:0px 0px 1px #bdbdbd;
+}
+
+.index .layui-card-header{
+    text-align: center;
+}
+
+
+
+.displayFlex{
+    display: flex;
+    justify-content: space-between;
+}
+.justifyContentSb{
+
+}
+.flex1{
+flex: 1;
+}
+.originalOther  .layui-form-label{
+    width: initial;
+}
+.originalForm .layui-form-label{
+    text-align: left;
+
+}
+
+
+.originalOther .layui-input-block{
+    margin-left: 0;
+}
+
+.originalForm textarea{
+    min-height: 300px;
+}
+
+.goodForm{
+    padding: 10px;background: #eeeeee4a;
+}
+.goodForm .layui-form-radio{
+    padding-right: 0;
+    margin: 0;
+}
+/*.goodForm .layui-form-radio{*/
+/*    display: block;*/
+/*}*/
+.textAlignCenter{
+    text-align: center;
+}
+.marginTop10{
+    margin-top: 10px;
+}
+.marginBottom10{
+    margin-bottom: 10px;
+}
+.padding10{
+    padding: 10px;
+}
+.paddingTop10{
+    padding-top: 10px;
+}
+.paddingBottom10{
+    padding-bottom: 10px;
+}
+.index .content{
+    background: #f9f9f9;
+    padding:20px 0;
+}
+.layui-elem-field{
+    border-style: dashed;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+}
+.layui-tab-title{
+    border-radius: 20px;
+    -moz-box-shadow:0px 3px 6px #BFBFBF;
+    -webkit-box-shadow:0px 3px 6px #BFBFBF;
+    box-shadow:0px 3px 6px #BFBFBF;
+}
+.index .layui-card{
+    border-radius: 30px;
+    -moz-box-shadow:0px 8px 6px #BFBFBF;
+    -webkit-box-shadow:0px 8px 6px #BFBFBF;
+    box-shadow:0px 8px 6px #BFBFBF;
+}
+
+
+
+#result span {
+    display: inline-block;
+    line-height: 14px;
+    height: 14px;
+    margin-top: 4px;
+    padding-top: 4px;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    border-radius: 4px;
+}
+iframe .v1_sub{
+    background: #ff0075;
+    text-decoration : line-through;
+}
+iframe  .v1_add{
+    background: #ff0075;
+}
+
+iframe  .v2_sub{
+    background: #75d6ff;
+    text-decoration : line-through;
+}
+iframe  .v2_add{
+    background: #75d6ff;
+}
+.v3_sub{
+    background: #f112dd;
+    text-decoration : line-through;
+}
+.v3_add{
+    background: #f112dd;
+}
+.v4_sub{
+    background: #ff8800;
+    text-decoration : line-through;
+}
+.v4_add{
+    background: #ff8800;
+}
+
+.originalForm .bigTextarea{
+    margin-left: 28px;
+    margin-top: 40px;
+}
+.layui-table-pageview{
+    float: right;
+}
+.batch_input{
+    position: relative;
+    top: -50px;
+    left: 50px;
+    z-index: 999;
+    width: 100px;
+    display: inline-block;
+}
+.layui-table-cell{
+    height: 100%;
+    line-height: initial;
+}
+
+.batch_input{
+    display: none;
+}
+
+@media only screen and (min-width: 769px) {
+    .goodForm .good-submit {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+    }
+}
+
+.layui-tab-bar{
+    width: 20px;
+    height: 50px;
+    line-height: 50px;
+}
+.layui-tab-title{
+    margin-bottom: 10px;
+}
+#originalAlert{
+    height: 300px;
+    overflow: auto;
+}
+#originalAlertText{
+    display: none;
+}
+
+.articleInfo h3{
+    font-weight: bold;
+    margin: 5px 0;
+}
+.articleInfo .time{
+    text-align: center;
+}
+.articleInfo .more{
+    display: flex;
+    justify-content: space-between;
+}
+
+.articleInfo h1{
+    margin-top: 50px;
+}
+.articleInfo .content{
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #f6f6f6;
+    line-height: 30px;
+    margin-bottom: 100px;
+}
+
+.articleInfo .layui-card{
+    width: 48%;
+}
+.articleInfo .more .layui-card-body{
+
+}
+.articleInfo .more .layui-card-body a{
+    display: block;
+    line-height: 30px;
+    border-top: 1px dashed #f6f6f6;
+}
+
+@media only screen and (max-width: 768px) {
+    .layui-fluid{
+        padding: 0;
+    }
+    .index{
+        padding: 0;
+    }
+    .layui-form-item{
+        /*display: flex;*/
+        /*align-content: initial;*/
+    }
+    .layui-form-label{
+        text-align: left;
+        float:initial;
+    }
+    .layui-input-block{
+        flex: 1;
+        margin-left: 10px;
+    }
+
+    .juhefromai .layui-elem-field:nth-child(1){
+        border: none;
+    }
+
+    .originalForm .displayFlex{
+        display: block;
+    }
+    .originalForm #needOriginal{
+        min-height: 150px;
+    }
+    .originalForm .flex1:nth-child(2){
+        display: none;
+    }
+    .originalForm .layui-input-block{
+        margin: 0;
+    }
+    .layui-tab{
+        margin: 0;
+    }
+    .layui-tab-content{
+        padding: 0;
+    }
+    .header{
+        margin-bottom: 0;
+    }
+    .goodForm .good-submit{
+        display: block;
+        margin: 10px auto;
+    }
+    .goodForm .layui-form-radio{
+        margin-bottom: 10px;
+    }
+    .footer .interactive-body-r{
+        margin: 10px 0;
+    }
+    .footer .width1200{
+        margin-bottom: 10px;
+    }
+    .install{
+        padding: 30px 0;
+    }
+    .width1200{
+        width: 80vw;
+    }
+    .articleInfo .more{
+        display: block;
+    }
+    .articleInfo .layui-card{
+        width: 100%;
+    }
+    .originalForm .layui-input-block{
+        margin-left: 14px;
+    }
+}
+
+.quickTaskAdd{
+    /*margin: 30px 0;*/
+    /*width: 1200px;*/
+}
+.layui-form-item{
+    display: inline-flex;
+}
+
+.layui-form-label{
+    width: 200px;
+}
+.layui-input-block{
+    margin-left: 0;
+    align-items: center;
+}
+a{
+
+}

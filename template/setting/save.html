@@ -1,0 +1,99 @@
+{% include "partial/header.html" %}
+<style>
+
+</style>
+<main class="container quickTaskAdd">
+  <div class="install width1200">
+
+    <div class="layui-form">
+      <div class="layui-form" style="padding: 10px;margin: auto; width: 54%;">
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">熊猫头AI授权账号：</label>
+          <div class="layui-input-block" >
+            <input type="text" name="auth[token]" class="layui-input" value="{{ auth.Token }}" />
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">代理平台：</label>
+          <div class="layui-input-block" style="display: inline-flex">
+           <div style="width: 150px;">
+             <select name="ip_pool[platform]" lay-search>
+              {% for ipPoolK,ipPoolItem in ipPoolPlatform %}
+              <option value="{{ipPoolK}}" {% if ipPool.Platform==ipPoolK %}selected{% endif %} data-url="">{{ipPoolItem}}</option>
+              {% endfor %}
+            </select>
+           </div>
+           &emsp; <a href="https://www.ipzan.com?pid=niuh9thq8" target="_blank">前往代理平台</a>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">代理平台授权key：</label>
+          <div class="layui-input-block" >
+            <input type="text" name="ip_pool[app_key]" class="layui-input" value="{{ ipPool.AppKey }}" />
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">代理平台授权密钥：</label>
+          <div class="layui-input-block" >
+            <input type="text" name="ip_pool[app_secret]" class="layui-input" value="{{ ipPool.AppSecret }}" />
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">并发：</label>
+          <div class="layui-input-block" >
+            <input type="number" name="ip_pool[currency]" class="layui-input" value="{{ ipPool.Currency }}" style="width: 80px"/>
+          </div>
+        </div>
+
+        <div class="layui-form-item">
+          <label class="layui-form-label">任务执行时间：</label>
+          <div class="layui-input-inline" >
+            <div class="layui-form-mid">8 - </div>
+            <input type="number" name="quick_task[end_time]" max="24" min="9" class="layui-input" value="{{ quickTask.EndTime }}" style="width: 80px"/>
+          </div>
+
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label"></label>
+          <div class="layui-input-block tips" >24小时制，会根据结束时间，平均分配任务，填0就是立即执行 。填18 就是 18点之后不再执行任务 </div>
+        </div>
+    <div class="layui-row layui-col-space10" style="text-align: center;margin-top: 20px;">
+      <button type="button" class="layui-btn" lay-submit lay-filter="subm" id="doSubm">保存设置</button>
+    </div>
+    </div>
+  </div>
+</main>
+
+
+
+
+<script>
+
+  layui.use(['form','jquery','element','table','common'], function () {
+    var layer = layui.layer, laytpl = layui.laytpl, $ = layui.jquery, form = layui.form, element = layui.element,
+            table = layui.table,common = layui.common;
+    form.render()
+    form.on('submit(subm)', function(data)
+    {
+      common.putData(common.parseFormToObject(common.formatData(data.field)),'','/api/setting/save','',function(res){
+        layer.close(layer.index)
+        if (res.code<1) {
+          layer.msg(res.msg)
+        }else{
+          window.location.href="/setting/save"
+        }
+      })
+    })
+
+  })
+
+
+</script>
+
+{% include "partial/footer.html" %}
+

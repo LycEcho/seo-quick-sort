@@ -1,0 +1,203 @@
+{% include "partial/header.html" %}
+<main class="container quickTaskAdd">
+  <div class="install width1200">
+
+    <div class="layui-form">
+
+<textarea name="batch" style="height: 314px;resize: none;" placeholder="1.每行一个任务，可批量添加任务。
+2.格式为：关键词>网址(不用带http/https)>， '>' 符号前后不能有空格，示例如下：
+    熊猫头AI>www.lycecho.com>2" class="layui-textarea">熊猫头AI>www.lycecho.com>2
+论文写作>www.lycecho.com>2</textarea>
+
+    <div class="layui-row layui-col-space10" style="text-align: center;margin-top: 20px;">
+      <button type="button" class="layui-btn" lay-submit lay-filter="subm" id="doSubm">立即创建</button>
+    </div>
+    </div>
+  </div>
+</main>
+<script type="text/html" id="addTpl">
+  <div class="layui-form" style="padding: 10px;margin: auto; width: 94%;">
+    <table class="layui-table">
+      <colgroup>
+        <col>
+        <col>
+        <col width="100">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>关键词</th>
+        <th>链接 - <a id="batchLink">批量设置</a></th>
+        <th>点击次数 - <a id="batchNum">批量设置</a></th>
+      </tr>
+      </thead>
+      <tbody id="lists">
+      {% verbatim %}
+      {{# var page=0;layui.$.each(d.list,function(ks,v){ }}
+      <tr>
+        <td><input type="text" name="tasks[{{ page }}][keyword]" value="{{ v.keyword }}" placeholder="优化的关键词" class="layui-input"></td>
+        <td><input type="text" name="tasks[{{ page }}][url]" value="{{ v.url }}" placeholder="优化的链接" class="layui-input batchUrl"></td>
+        <td><input type="number" name="tasks[{{ page }}][day_click]" value="{{ v.day_click }}" class="layui-input batchNum"></td>
+      </tr>
+      {{# page++;}) }}
+      {% endverbatim %}
+      </tbody>
+    </table>
+
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">分组：</label>
+      <div class="layui-input-block" >
+        <select name="categoryId" lay-filter="categoryId" lay-search>
+          <option value="0">默认分组</option>
+          {% for item in categories %}
+          <option value="{{item.Id}}">{{item.Title}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">优化平台：</label>
+      <div class="layui-input-block" >
+        {% for k,item in platform %}
+        <input type="radio" name="platform" value="{{k}}" title="{{item}}"  checked/>
+        {% endfor %}
+      </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button type="button" class="layui-btn" lay-submit lay-filter="submCheck" style="margin: 0 auto;">立即开始</button>
+      </div>
+    </div>
+
+  </div>
+</script>
+<script id="setBatchTpl" type="text/html">
+  <div class="layui-form" style="padding: 10px;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">设置为</label>
+      <div class="layui-input-block">
+        <input type="text" name="content" required  lay-verify="required" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button type="button" class="layui-btn" lay-submit lay-filter="setBatchSub" style="margin: 0 auto;">确认修改</button>
+      </div>
+    </div>
+  </div>
+
+</script>
+
+
+<script>
+
+  layui.use(['form','jquery','element','table','common'], function () {
+    var layer = layui.layer, laytpl = layui.laytpl, $ = layui.jquery, form = layui.form, element = layui.element,
+            table = layui.table,common = layui.common;
+
+    form.on('submit(subm)', function(data)
+    {
+      let task = data.field.batch.split('\n');
+      let list = [];
+      let arrTmp = [];
+
+      if( data.field.batch ){
+        $.each(task,function(k,v){
+          let d = v.split('>');
+          let str = d[0]+d[1];
+          if(str != '' && d[0] !='' && d[1] != ''){
+            if(arrTmp.indexOf(str) === -1){
+              arrTmp.push(str);
+              list.push({'keyword':d[0],'url':d[1],'day_click':d[2]});
+            }
+          }
+        })
+      }else{
+        list.push({'keyword':'','url':'','day_click':2});
+      }
+
+
+      common.renderDiy(addTpl,{list:list},{
+        title:'确认优化任务'
+        ,type:1
+        ,area:['800px','500px']
+        ,success:function ()
+        {
+          form.render()
+          form.on('submit(submCheck)',function(data){
+
+            //组合修改之后的数据
+            let newData = [];
+            let trNode = $('#lists').children('tr')
+
+            trNode.map((k,v)=>{
+             let tdNode =  $(v).find('input')
+              newData.push({'keyword':$(tdNode[0]).val(),'url':$(tdNode[1]).val(),'day_click':parseInt($(tdNode[2]).val())})
+            })
+
+
+            layer.load(1)
+            common.putData({"data":newData,"platform":parseInt(data.field.platform),'category_id':parseInt(data.field.categoryId)},'','/api/quickTask/save','',function(res){
+              layer.close(layer.index)
+              if (res.code<1) {
+                if(!res.otherData){
+                  layer.msg(res.msg)
+                }else{
+
+                }
+
+              }else{
+                window.location.href="/quickTask/list"
+              }
+            })
+          })
+
+
+          $('#batchNum').click(function(){
+
+            common.renderDiy(setBatchTpl,{},{
+              title:"批量设置次数"
+              ,type:1
+              ,success:function ()
+              {
+                form.on('submit(setBatchSub)',function(data){
+                  layer.close(layer.index)
+                  $('.batchNum').val(data?.field?.content)
+                })
+              }
+            })
+
+          })
+
+          $('#batchLink').click(function(){
+
+            common.renderDiy(setBatchTpl,{},{
+              title:"批量设置网址"
+              ,type:1
+              ,success:function ()
+              {
+                form.on('submit(setBatchSub)',function(data){
+                  layer.close(layer.index)
+                  $('.batchUrl').val(data?.field?.content)
+                })
+              }
+            })
+
+          })
+
+
+        }
+      })
+    })
+
+  })
+
+
+</script>
+
+{% include "partial/footer.html" %}
+
